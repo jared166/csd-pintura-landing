@@ -69,10 +69,10 @@ Para probar como en GitHub Pages bajo subruta, sirve la carpeta padre y entra po
 
 ## Publicar una nueva versión (caché)
 
-Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261016.2`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
+Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261016.3`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
 
 ```bash
-grep -rl 'v=20261016.2' --include=index.html . | xargs sed -i 's/v=20261016.2/v=20261120/g'   # usa la fecha de hoy
+grep -rl 'v=20261016.3' --include=index.html . | xargs sed -i 's/v=20261016.3/v=20261120/g'   # usa la fecha de hoy
 ```
 
 ## Qué se edita en `config.js`
@@ -156,7 +156,22 @@ GTM se carga solo si `gtmId` tiene valor. `window.dataLayer` existe siempre. **L
 
 ## Titular según grupo de anuncios
 
-Agrega `?h=office`, `?h=exterior` o `?h=warehouse` a la URL final del anuncio. El H1 cambia a la variante definida en el HTML (nunca se inserta texto de la URL). Cualquier otra clave deja el H1 por defecto. La clave mostrada viaja como `headline_variant`.
+Agrega `?h=` a la URL final de cada grupo de anuncios (las campañas pagas son en inglés):
+
+| `?h=` | H1 (EN) |
+| --- | --- |
+| `office` | Professional Office Painting in Miami, Done by Our Own Crew |
+| `retail` | Professional Retail Store Painting in Miami, Done by Our Own Crew |
+| `warehouse` | Professional Warehouse Painting in Miami, Done by Our Own Crew |
+| `restaurant` | Professional Restaurant Painting in Miami, Done by Our Own Crew |
+| `residential` | Residential Painting in Miami? Talk Directly to Our Own Crew |
+
+`es/index.html` tiene las mismas claves traducidas, por si el usuario cambia de idioma. El H1 cambia a la variante definida en el HTML (nunca se inserta texto de la URL). Cualquier otra clave, incluida la retirada `exterior`, deja el H1 por defecto. La clave viaja como `headline_variant` y `h_param`.
+
+**Para agregar o cambiar una variante**, toca los tres lugares a la vez:
+1. El atributo `data-h-<clave>` del `<h1>` en `index.html` y `es/index.html`.
+2. La lista del script inline, en esos dos archivos.
+3. `HEADLINE_KEYS` en `assets/js/attribution.js`.
 
 ## Checklist de lanzamiento (bloqueantes)
 

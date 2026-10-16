@@ -19,7 +19,7 @@ Después, en una segunda fase, se aplicó una capa de diseño premium (ver secci
 
 | Indicador | Resultado |
 | --- | --- |
-| Pruebas funcionales automatizadas (sección 12 del brief) | 102/102 OK |
+| Pruebas funcionales automatizadas (sección 12 del brief) | 110/110 OK (fase 4) |
 | Scroll horizontal entre 360 y 1440 px | Ninguno |
 | Recursos rotos bajo subruta `/csd-landing-painting/` | Ninguno |
 | Palabras prohibidas en copy visible | Ninguna |
@@ -57,7 +57,39 @@ Cada idioma es una **página HTML ya renderizada** (no texto inyectado por JS): 
 | `form.js` | Validación, antispam, payload, envío al webhook, eventos y plan B |
 
 ### 2.4 Decisiones tomadas por cuenta propia
-1. **Variantes del H1 en el propio HTML.** Los textos de `?h=office|exterior|warehouse` viven como atributos `data-h-*` del `<h1>`, y un script inline de una línea, ubicado justo después del H1, los aplica **antes del primer pintado** (un módulo diferido llegaría tarde y provocaría parpadeo). Solo se elige entre textos definidos: nunca se inserta texto de la URL.
+1. **Variantes del H1 en el propio HTML.** Los textos de cada variante viven como atributos `data-h-*` del `<h1>`, y un script inline de una línea, ubicado justo después del H1, los aplica **antes del primer pintado** (un módulo diferido llegaría tarde y provocaría parpadeo). Solo se elige entre textos definidos: nunca se inserta texto de la URL.
+
+   **Variantes vigentes** (alineadas con las campañas de Google Ads en inglés y con los tipos de propiedad del formulario). Todo el tráfico pago llega en inglés; el español es solo respaldo si el usuario cambia de idioma.
+
+   | `?h=` | EN (`index.html`) | ES (`es/index.html`) |
+   | --- | --- | --- |
+   | _(sin `h`)_ | Commercial Painting in Miami, Done by Our Own Crew | Pintura comercial en Miami, hecha por nuestro propio equipo |
+   | `office` | Professional Office Painting in Miami, Done by Our Own Crew | Pintura profesional de oficinas en Miami, hecha por nuestro propio equipo |
+   | `retail` | Professional Retail Store Painting in Miami, Done by Our Own Crew | Pintura profesional de tiendas en Miami, hecha por nuestro propio equipo |
+   | `warehouse` | Professional Warehouse Painting in Miami, Done by Our Own Crew | Pintura profesional de almacenes en Miami, hecha por nuestro propio equipo |
+   | `restaurant` | Professional Restaurant Painting in Miami, Done by Our Own Crew | Pintura profesional de restaurantes en Miami, hecha por nuestro propio equipo |
+   | `residential` | Residential Painting in Miami? Talk Directly to Our Own Crew | ¿Pintura residencial en Miami? Hable directamente con nuestro propio equipo |
+
+   **Criterio del copy:** cada titular repite la palabra clave del grupo de anuncios (coincidencia anuncio → página, que favorece el nivel de calidad y la tasa de conversión) y cierra con el diferencial confirmado ("our own crew" / "nuestro propio equipo"). Respeta las reglas de contenido: sin precios, plazos, garantías, "best" ni "free". En `residential`, la página sigue diciendo en su FAQ que es de pintura comercial; por eso el titular invita a hablar con el equipo y no promete el servicio.
+
+   **Retiradas:** `exterior` (y el `data-h-exterior` de ambos idiomas).
+
+   **Cómo funciona (fase 4):**
+   - **Lista blanca del script inline** (en `index.html` y `es/index.html`): `/^(office|retail|warehouse|restaurant|residential)$/`. Solo esas 5 claves exactas, en minúsculas, cambian el H1.
+   - **Respaldo:** el script aplica el texto solo si el atributo `data-h-<clave>` existe y no está vacío. Si falta, queda el H1 por defecto (antes, una clave aceptada sin atributo dejaba el H1 vacío).
+   - **Atribución:** la misma lista está en `HEADLINE_KEYS` de `assets/js/attribution.js`. Así la clave llega a GoHighLevel como `h_param` (la de la URL del primer contacto) y como `headline_variant` (la que vio el usuario al enviar).
+   - **Claves desconocidas, `exterior`, mayúsculas, vacías o con código** (`?h=<script>`): H1 por defecto, en EN y ES. Verificado.
+
+   **URLs finales para Google Ads** (un valor por grupo de anuncios):
+   - `https://<dominio>/?h=office`
+   - `https://<dominio>/?h=retail`
+   - `https://<dominio>/?h=warehouse`
+   - `https://<dominio>/?h=restaurant`
+   - `https://<dominio>/?h=residential`
+
+   Los anuncios que todavía usen `?h=exterior` siguen funcionando, pero muestran el titular general; conviene cambiar su URL final.
+
+   **Nota sobre `residential`:** la FAQ sigue diciendo que la página es de pintura comercial, y los leads con `property_type = residential` disparan `lead_residential`, que no es conversión de Google Ads. Si se va a pautar a vivienda, hay que revisar ambas cosas.
 2. **`noindex` estático en el HTML.** Google puede no renderizar JS si el HTML inicial ya trae `noindex`, así que la etiqueta va escrita en las 8 páginas. `config.noindex` la mantiene; para indexar hay que poner `false` y borrar la línea (comando en el README).
 3. **GTM inyectado desde `tracking.js`** con el snippet oficial, porque el ID vive en `config.js`. El `<noscript>` de GTM no se incluye: no puede leer `config.js`, y sin JS el formulario no funciona, así que no se pierde ninguna conversión.
 4. **Botón "Request a Quote" del header oculto en móvil (< 900 px).** En 360 px no entran logo (mín. 120 px) + idioma + teléfono + un botón primario de 19 px. En móvil la acción la cubren el botón del hero y la barra inferior fija.
@@ -166,7 +198,7 @@ Se automatizó con Playwright (Chromium headless) sirviendo el sitio bajo `/csd-
 2. **Subruta**: sin recursos rotos.
 3. **Formulario**: a) comercial, b) residencial, c) validación, d) honeypot y envío < 3 s, e) falla a los 10 s con mensaje de plan B. Además: envío real `cors-json` contra un webhook simulado con redirección a `es/gracias/`.
 4. **Atribución**: GCLID persiste tras cambiar de idioma y enviar sin parámetros; con storage bloqueado no hay errores y el GCLID llega desde memoria.
-5. **Titulares**: `office`, `exterior`, `warehouse` en EN y ES; `<script>`, claves desconocidas, mayúsculas y vacías dejan el H1 por defecto.
+5. **Titulares** (fase 4): `office`, `retail`, `warehouse`, `restaurant` y `residential` cambian el H1 en EN y ES y llegan al payload como `headline_variant` y `h_param`. `exterior` (retirada), `other_commercial`, `<script>`, claves desconocidas, mayúsculas y vacías dejan el H1 por defecto. Pruebas: 110/110.
 6. **Configuración vacía**: sin `tel:`, sin `mailto:`, sin `href=""`, sin galería, 4 pasos, sin bloques opcionales, sin scripts de Google y sin "[PENDIENTE]", "undefined" ni "null" en las 8 páginas. Con la configuración completa: GTM carga, aparecen los 4 `tel:` con su `location`, 5 pasos con `siteVisit`, cross-sell, pie completo, JSON-LD `LocalBusiness`, barra móvil que aparece después del hero y se oculta en el formulario, eventos `click_to_call` y `language_switch`.
 7. **Copy y palabras prohibidas**: verificado.
 8. **Contraste**: todo texto blanco sobre magenta es de 19 px y peso 700; no hay texto violeta.
@@ -193,7 +225,7 @@ Del catálogo del skill se eligió el arquetipo **05 · Mouse-Reactive Gradient*
 **Micro-detalles:** índice decorativo `01–06` en cada título de sección (contador CSS, sin texto en el HTML), botones con elevación y reflejo, subrayado animado en el cambio de idioma, pulso cian junto a "We'll call you back the same business day", línea de tiempo conectada en "How it works", FAQ con apertura suave (CSS `::details-content`, donde el navegador lo soporta), formulario con borde degradado de marca, línea de luz en el pie y halo en la insignia de gracias.
 
 ### 9.3 Robustez adoptada del skill
-- **Cache-busting** `?v=20261016` en `styles.css`, `main.js` y `form.js`. **Hay que subir la fecha en cada publicación** (los imports internos entre módulos no llevan versión; GitHub Pages cachea 10 minutos).
+- **Cache-busting** `?v=AAAAMMDD` (hoy `?v=20261016.3`) en `styles.css`, `main.js` y `form.js`. **Hay que subir la fecha en cada publicación** (los imports internos entre módulos no llevan versión; GitHub Pages cachea 10 minutos).
 - **`.htaccess`** del skill en la raíz: GitHub Pages lo ignora; sirve si algún día el sitio se aloja en Apache/Hostinger.
 - **Cada `init` de `main.js` aislado con `safe()`**: si uno falla, el resto de la página sigue funcionando.
 - **Reveals con umbral bajo (0,01) y red de seguridad a los 6 s**: ningún contenido queda oculto. Escalonado suave entre hermanos.
@@ -237,7 +269,7 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 - **Dónde aparece:** header y pie de las 8 páginas (con `width`/`height` reales, sin salto de layout), imagen OG (`og-image.jpg`), favicon (`favicon-32.png`, `favicon.png`) e ícono de iOS (`apple-touch-icon.png`). Los íconos usan el monograma "CSD" del mismo archivo, recortado y escalado sobre `#0A0A0A`, porque la línea "GOOD SERVICES LLC" no se lee a 32 px. Se eliminó el `favicon.svg` provisorio.
 - **Tamaños:** 120 px de ancho en móvil (el mínimo del manual), 140 px en escritorio y 180 px en el pie. El área de resguardo horizontal (≥ altura de la "D") se respeta con el espacio libre entre el logo y el resto del header.
 - **Desvío del brief:** el header pasa de 60 a **72 px en móvil** y de 76 a **84 px en escritorio**. Con 120 px de ancho, el logo mide 54 px de alto; en 60 px quedaba pegado a los bordes. Entre "header de 60 px" y "logo de 120 px mínimo con resguardo" se priorizó la identidad de marca (prioridad 3 del brief, por encima de velocidad y detalle de layout).
-- **Caché:** versión de los assets subida a `?v=20261016.2`.
+- **Caché:** versión de los assets subida a `?v=20261016.2` (en la fase 4, `?v=20261016.3`).
 - **Resultado:** cero 404 en las 8 páginas. Lighthouse móvil EN y ES: rendimiento 100 (LCP 1,4 s, CLS 0), accesibilidad 100, buenas prácticas **100**, SEO 54 (intencional). Pruebas funcionales: 102/102.
 - **Mejora opcional:** el archivo recibido tiene poca resolución (331 px de ancho). En pantallas retina el pie (180 px → 360 px físicos) lo escala apenas. Si CSD tiene el logo en SVG o en PNG de mayor resolución, conviene reemplazarlo.
 
@@ -276,3 +308,4 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 | 1 · Construcción | Estructura, copy EN/ES, formulario, atribución, medición, SEO, accesibilidad, README y guías para agentes |
 | 2 · Capa premium | Abanico de muestras animado, mesh, grano, bento, halo en tarjetas, ticker, barra de progreso, timeline, cache-busting, `.htaccess`, `safe()`, fuentes sin bloquear el render |
 | 3 · Logo oficial | Logo en header, pie e imagen OG; favicon e ícono de iOS desde el monograma; header 72/84 px |
+| 4 · Titulares por campaña | Variantes del H1 alineadas con las campañas en inglés y los tipos de propiedad: `office`, `retail`, `warehouse`, `restaurant`, `residential` (EN + ES); `exterior` retirada; lista blanca del script y de `attribution.js` actualizada; respaldo al H1 por defecto si falta un texto; `?v=20261016.3` |

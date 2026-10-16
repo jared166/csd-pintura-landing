@@ -98,7 +98,7 @@ La conversión de Google Ads se configura **solo** sobre `generate_lead`. La pá
    d) antispam → con el campo trampa lleno no se envía nada.
    e) falla → con un webhook que no responde, a los 10 s aparece el mensaje con teléfono y email.
 4. **Atribución:** entrar con `?gclid=TEST123`, ir a `/es/` y enviar sin parámetros → el gclid sigue en el payload. Con storage bloqueado, sin errores.
-5. **Titulares:** `?h=office|exterior|warehouse` cambian el H1 en EN y ES; `?h=<script>` o claves desconocidas dejan el H1 por defecto.
+5. **Titulares:** `?h=office|retail|warehouse|restaurant|residential` cambian el H1 en EN y ES y llegan al payload como `headline_variant` y `h_param`; `?h=exterior` (retirada), `?h=<script>` o claves desconocidas dejan el H1 por defecto. Para agregar una variante, toca a la vez el `data-h-*` de los dos HTML, la lista del script inline y `HEADLINE_KEYS` de `attribution.js`.
 6. **Configuración vacía:** sin teléfono no hay `tel:`; sin galería no hay sección; sin GTM no hay scripts de Google; `siteVisit: false` → 4 pasos; nunca "[PENDIENTE]", "undefined" ni "null" en pantalla.
 7. **Copy y reglas:** comparar con el brief palabra por palabra. Buscar y confirmar que no aparecen: free, gratis, cheap, affordable, barato, guarantee, garantía, licensed, insured, on time, best, #1, bodega, presupuesto, tú, vos (las claves de config `optionalBlocks.guarantee` son la única excepción).
 8. **Contraste:** nada de blanco sobre magenta < 19 px negrita; nada de texto violeta.
