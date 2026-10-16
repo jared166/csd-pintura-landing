@@ -58,7 +58,7 @@ Prioridades, en orden: 1) copy exacto, 2) medición correcta para Google Ads, 3)
 
 **Tipografía:** Inter 400/600/700/800 (Google Fonts, `display=swap`). H1/H2 ExtraBold 800 blancos. Cuerpo 400, 16–18 px, interlineado 1,5. Etiquetas y botones 600, mayúsculas, tracking 1,5–2 px. H1 34→56 px (lh 1,05), H2 26→40 px, H3 20 px. Nunca texto < 14 px. Nunca Light sobre oscuro.
 
-**Logo:** solo el archivo oficial (`assets/img/logo-csd.svg`). No recrear, no redibujar, no escribir "CSD" ni "GOOD SERVICES LLC" con otra fuente. Ancho mínimo 120 px. Área de resguardo = altura de la "D" del monograma. Sin sombras, biseles ni trazos. Siempre sobre `#0A0A0A`.
+**Logo:** solo el archivo oficial (`assets/img/logo-csd.png`, 266×119, transparente; en el HTML lleva `width="266" height="119"` y el ancho lo fija el CSS: 120 px en móvil, 140 px en escritorio, 180 px en el pie). Favicon e ícono de iOS = recorte del monograma "CSD" de ese archivo. No recrear, no redibujar, no escribir "CSD" ni "GOOD SERVICES LLC" con otra fuente. Ancho mínimo 120 px. Área de resguardo = altura de la "D" del monograma. Sin sombras, biseles ni trazos. Siempre sobre `#0A0A0A`.
 
 **Sistema:** negro dominante, neones como puntos de luz. Botón primario pill magenta, alto ≥ 52 px, ancho completo en móvil, hover con borde/brillo cian, foco outline cian 3 px. Secundario ghost con borde blanco 1,5 px o texto con "↗". Tarjetas `--csd-surface`, borde `--csd-border`, radio 16 px. Íconos SVG de línea 1,75 px en cian. Animaciones mínimas (fade + 8 px), respetando `prefers-reduced-motion`. Sin parallax ni cursores personalizados.
 
@@ -90,7 +90,7 @@ La conversión de Google Ads se configura **solo** sobre `generate_lead`. La pá
 ## Verificación antes de cada commit
 
 1. **Capturas** EN y ES en 360×800, 768×1024 y 1440×900 (Playwright). Revisar hero, barra inferior móvil, formulario y pie.
-2. **Subruta:** servir bajo `/csd-landing-painting/` y confirmar que no hay recursos rotos (el único 404 aceptable hoy es `logo-csd.svg`, pendiente).
+2. **Subruta:** servir bajo `/csd-landing-painting/` y confirmar que no hay recursos rotos (no debe haber ningún 404).
 3. **Formulario** con `webhookUrl` vacío y `?gclid=TEST123&utm_source=google&utm_campaign=painting&h=office`:
    a) comercial → payload completo, `phone_e164`, `lead_type: "commercial"`, `headline_variant: "office"`, gclid y UTM; `generate_lead` con `user_data`; redirige a `thank-you/` con el query string.
    b) residencial → `lead_type: "residential"`, `lead_residential`, sin `generate_lead`.
