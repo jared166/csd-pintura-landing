@@ -12,7 +12,7 @@ const KEY = "csd_attribution_v1";
 const TTL_MS = 90 * 24 * 60 * 60 * 1000;
 const PARAMS = ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "h"];
 const CLICK_IDS = ["gclid", "gbraid", "wbraid"];
-const HEADLINE_KEYS = ["office", "exterior", "warehouse"];
+const HEADLINE_KEYS = ["office", "retail", "warehouse", "restaurant", "residential"];
 
 let memory = null;
 
