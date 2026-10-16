@@ -7,7 +7,7 @@
  * Everything degrades gracefully: an empty config value removes its element.
  */
 import { CONFIG } from "./config.js";
-import { track, trackAndWait, GTM_ENABLED } from "./tracking.js";
+import { track, trackAndWait, GTM_ENABLED } from "./tracking.js"; // also loads GTM (first import)
 import "./attribution.js";
 import { LANG, has, pick, assetUrl, safeUrl, telHref, configEmail } from "./util.js";
 
@@ -367,19 +367,41 @@ function syncRobots() {
   }
 }
 
-/* 8. Reveal on scroll (fade + 8px). Off with prefers-reduced-motion. */
+/* 8. Reveal on scroll (fade + 8px; fade only with prefers-reduced-motion, via CSS).
+   Low threshold + 6 s safety net: content is never left hidden. */
 function initReveal() {
   const items = $$(".reveal");
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduced || !("IntersectionObserver" in window)) return items.forEach((el) => el.classList.add("is-in"));
+  // Light stagger for siblings inside the same grid/list
+  items.forEach((el) => {
+    const siblings = Array.from(el.parentElement.children).filter((n) => n.classList.contains("reveal"));
+    const index = siblings.indexOf(el);
+    if (index > 0) el.style.setProperty("--d", `${Math.min(index, 5) * 70}ms`);
+  });
+  const showAll = () => items.forEach((el) => el.classList.add("is-in"));
+  if (!("IntersectionObserver" in window)) return showAll();
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
       entry.target.classList.add("is-in");
       io.unobserve(entry.target);
     });
-  }, { rootMargin: "0px 0px -8% 0px" });
+  }, { threshold: 0.01, rootMargin: "0px 0px -6% 0px" });
   items.forEach((el) => io.observe(el));
+  setTimeout(() => items.forEach((el) => {
+    if (!el.classList.contains("is-in") && el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-in");
+  }), 6000);
+}
+
+/* Card halo: cyan glow follows the pointer inside cards (mouse only, no custom cursor) */
+function initCardHalo() {
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  document.addEventListener("pointermove", (event) => {
+    const card = event.target.closest && event.target.closest(".card");
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+    card.style.setProperty("--my", `${event.clientY - rect.top}px`);
+  }, { passive: true });
 }
 
 /* 9. Header state on scroll (thin border once the page moves) */
@@ -391,16 +413,28 @@ function initHeader() {
   window.addEventListener("scroll", onScroll, { passive: true });
 }
 
-syncRobots();
-fillConfigData();
-initLanguageSwitch();
-initCallTracking();
-initSiteVisit();
-initCrossSell();
-initHeroImage();
-initGallery();
-initOptionalBlocks();
-initLocalBusinessSchema();
-initStickyBar();
-initHeader();
-initReveal();
+/* Each init is isolated: one failure never breaks the rest of the page. */
+function safe(fn) {
+  try {
+    fn();
+  } catch (error) {
+    console.warn(`[CSD] ${fn.name} failed`, error);
+  }
+}
+
+[
+  syncRobots,
+  fillConfigData,
+  initLanguageSwitch,
+  initCallTracking,
+  initSiteVisit,
+  initCrossSell,
+  initHeroImage,
+  initGallery,
+  initOptionalBlocks,
+  initLocalBusinessSchema,
+  initStickyBar,
+  initHeader,
+  initReveal,
+  initCardHalo,
+].forEach(safe);

@@ -154,7 +154,7 @@ Todos los campos + `phone_e164`, `lead_type` (`residential` si la propiedad es v
 - JSON-LD `FAQPage` con las 6 preguntas visibles; `LocalBusiness` generado solo con los datos que existan en `config` (sin nombre legal, no se genera).
 - Un solo `h1` por página, foco visible cian de 3 px, skip link, áreas táctiles ≥ 44 px, `prefers-reduced-motion` respetado.
 - Sin JS que bloquee el render (módulos diferidos); fuentes con `display=swap`.
-- Peso por landing (HTML + CSS + JS, sin fuentes ni imágenes): ver sección 10.
+- Peso por landing (HTML + CSS + JS, sin fuentes ni imágenes): ~106 KB (ver sección 9.5).
 
 ---
 
@@ -170,15 +170,67 @@ Se automatizó con Playwright (Chromium headless) sirviendo el sitio bajo `/csd-
 6. **Configuración vacía**: sin `tel:`, sin `mailto:`, sin `href=""`, sin galería, 4 pasos, sin bloques opcionales, sin scripts de Google y sin "[PENDIENTE]", "undefined" ni "null" en las 8 páginas. Con la configuración completa: GTM carga, aparecen los 4 `tel:` con su `location`, 5 pasos con `siteVisit`, cross-sell, pie completo, JSON-LD `LocalBusiness`, barra móvil que aparece después del hero y se oculta en el formulario, eventos `click_to_call` y `language_switch`.
 7. **Copy y palabras prohibidas**: verificado.
 8. **Contraste**: todo texto blanco sobre magenta es de 19 px y peso 700; no hay texto violeta.
-9. **Rendimiento**: ver sección 10.
+9. **Rendimiento**: Lighthouse móvil 100 / 100 / 96 / 54 (ver sección 9.5).
 
 ---
 
-## 9. Fase 2: capa premium
+## 9. Fase 2: capa premium (skill "adrian-saenz-hostinger-premium-website")
 
-_Ver sección siguiente, completada tras aplicar el skill de diseño premium._
+### 9.1 Dirección de diseño
+Del catálogo del skill se eligió el arquetipo **05 · Mouse-Reactive Gradient** (fondo casi negro, paleta monocroma con un acento neón, Inter, energía sobria). Es el que mejor calza con el manual de CSD: negro dominante y neones como puntos de luz. Se adaptó a la paleta oficial: cian para acentos, magenta para la acción y violeta solo en brillos.
 
----
+**Efecto firma:** el **abanico de muestras de pintura** del hero, hecho solo con CSS. Se abre al cargar la página (1,1 s, sin retrasar el titular) sobre un mesh violeta y magenta que deriva lento, con un remache cian en el pivote. Comunica "pintura" sin fotos de stock.
+
+### 9.2 Efectos aplicados (5, uno de firma y cuatro de apoyo)
+| Efecto | Dónde | Notas |
+| --- | --- | --- |
+| Abanico de muestras que se abre + mesh gradient animado + grano | Hero (y mesh en `#quote`) | CSS puro; violeta al 10–20 %, nunca detrás de texto pequeño. En móvil se recorta como una franja baja de 230 px para no empujar el contenido |
+| Halo cian que sigue el puntero + borde luminoso | Tarjetas de "What we paint" y "Why work with CSD" | Solo con mouse (`hover: hover` y `pointer: fine`). No es un cursor personalizado: el cursor del sistema no cambia |
+| Bento asimétrico | "Why work with CSD" | Grilla 7/5 · 5/7 en escritorio; una columna en móvil |
+| Ticker tipográfico | "Spaces we paint" | Repite los mismos 5 espacios del copy en tipografía grande (contorno/sólido). Es un duplicado decorativo `aria-hidden`: los chips siguen siendo la lista accesible |
+| Barra de progreso de lectura | Borde inferior del header | CSS scroll-driven puro (`animation-timeline: scroll()`), sin JS. Los navegadores sin soporte no la muestran |
+
+**Micro-detalles:** índice decorativo `01–06` en cada título de sección (contador CSS, sin texto en el HTML), botones con elevación y reflejo, subrayado animado en el cambio de idioma, pulso cian junto a "We'll call you back the same business day", línea de tiempo conectada en "How it works", FAQ con apertura suave (CSS `::details-content`, donde el navegador lo soporta), formulario con borde degradado de marca, línea de luz en el pie y halo en la insignia de gracias.
+
+### 9.3 Robustez adoptada del skill
+- **Cache-busting** `?v=20261016` en `styles.css`, `main.js` y `form.js`. **Hay que subir la fecha en cada publicación** (los imports internos entre módulos no llevan versión; GitHub Pages cachea 10 minutos).
+- **`.htaccess`** del skill en la raíz: GitHub Pages lo ignora; sirve si algún día el sitio se aloja en Apache/Hostinger.
+- **Cada `init` de `main.js` aislado con `safe()`**: si uno falla, el resto de la página sigue funcionando.
+- **Reveals con umbral bajo (0,01) y red de seguridad a los 6 s**: ningún contenido queda oculto. Escalonado suave entre hermanos.
+- **Contenido crítico en el HTML**: sin JS se lee todo (verificado: H1, 6 FAQ, formulario y ninguna sección oculta).
+- **Reduced-motion bien graduado**: se apaga el **movimiento** (desplazamiento de los reveals, abanico, mesh, ticker, pulso, elevación al pasar el mouse), pero se mantienen las transiciones de color y borde. Así se cumple el brief sin dejar la página "muerta" en Windows, que trae esa preferencia activa en muchas instalaciones.
+- **Fuentes sin bloquear el render**: Inter se carga con `preload` + `onload` (y `<noscript>` de respaldo). Esto bajó el LCP móvil de 2,6 s a 1,3 s.
+
+### 9.4 Reglas del skill que NO se aplicaron (y por qué)
+El brief del cliente tiene prioridad sobre el skill. Estos desvíos son intencionales:
+
+| Regla del skill | Decisión | Motivo |
+| --- | --- | --- |
+| IIFE en vez de ES modules | Se mantienen **ES modules** | El brief los exige (sección 3) y la estructura de archivos depende de ellos. El sitio se sirve por HTTP (GitHub Pages), no por `file://` |
+| GSAP, Lenis, Three.js en `lib/` | **Sin librerías** | El brief prohíbe librerías de animación; todo se hizo con CSS y JS vanilla |
+| Fotos de stock de Openverse | **No** | Solo fotos reales de CSD. Sin fotos, la galería no se muestra |
+| Parallax, cursor personalizado, split-text en el hero | **No** | Prohibidos por el brief ("nada de parallax ni cursores personalizados ni animaciones que retrasen el hero") |
+| Todo en WebP | `og-image.jpg` y `apple-touch-icon.png` se mantienen | Facebook, LinkedIn, WhatsApp e iOS los requieren en JPG/PNG |
+| No gatear nada con reduced-motion | Se gatea solo el movimiento | El brief pide respetar `prefers-reduced-motion` |
+
+El verificador del skill (`verify_project.py`) marca esos puntos como errores. Todos corresponden a esta tabla o a activos pendientes del cliente (`logo-csd.svg`; `hero.webp` aparece solo en una línea comentada).
+
+### 9.5 Resultados después de la capa premium
+| Métrica (Lighthouse 12, móvil, servidor con gzip como GitHub Pages) | EN | ES |
+| --- | --- | --- |
+| Rendimiento | **100** | **100** |
+| Accesibilidad | **100** | **100** |
+| Buenas prácticas | 96 | 96 |
+| SEO | 54 | 54 |
+| LCP | 1,3 s | 1,3 s |
+| CLS | 0 | 0 |
+| TBT | 0 ms | 0 ms |
+
+- **Buenas prácticas 96:** el único fallo es el 404 de `logo-csd.svg` (pendiente del cliente). Desaparece al subir el logo.
+- **SEO 54, intencional:** se debe al `noindex` (una landing de anuncios no debe competir con el sitio principal) y a los `hreflang` relativos (el dominio aún no está definido). No afecta a Google Ads.
+- **Peso por landing:** ~106 KB de HTML + CSS + JS sin comprimir (límite: 120 KB) y ~28 KB con gzip.
+- **Pruebas funcionales:** 102/102 OK después de la capa premium.
+- **Contraste medido en el navegador:** ningún texto blanco sobre magenta por debajo de 19 px/700, ningún texto violeta, ningún texto < 14 px, un solo `h1` por página.
 
 ## 10. Pendientes (`[PENDIENTE]`)
 
@@ -200,3 +252,19 @@ _Ver sección siguiente, completada tras aplicar el skill de diseño premium._
 - Textos legales revisados por abogado en las 4 páginas legales. **No lanzar campañas sin esto.**
 - Revisión legal del texto de consentimiento (si piden casilla, se agrega).
 - Con el dominio definitivo: `hreflang` y `og:image` absolutos.
+
+---
+
+## 11. Cómo mantenerlo
+
+- **Cambiar datos, links, IDs o contenido condicional:** solo `assets/js/config.js`.
+- **Cambiar copy:** solo si Jared lo pide, en EN y ES a la vez. Las 2 landings son `index.html` y `es/index.html`. Si cambian los espacios de "Spaces we paint", actualizar también el ticker (`.ticker__track`, que repite la lista dos veces).
+- **Cambiar header, pie o formulario:** están repetidos en las 8 páginas; hay que replicar el cambio en todas.
+- **Antes de publicar:** subir la fecha de `?v=AAAAMMDD` en los `<link>`/`<script>` de las 8 páginas y correr la verificación de `AGENTS.md`.
+
+## 12. Historial
+
+| Fase | Contenido |
+| --- | --- |
+| 1 · Construcción | Estructura, copy EN/ES, formulario, atribución, medición, SEO, accesibilidad, README y guías para agentes |
+| 2 · Capa premium | Abanico de muestras animado, mesh, grano, bento, halo en tarjetas, ticker, barra de progreso, timeline, cache-busting, `.htaccess`, `safe()`, fuentes sin bloquear el render |

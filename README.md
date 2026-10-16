@@ -35,6 +35,7 @@ Landing de captación para el servicio de **pintura comercial** de CSD Good Serv
 │       ├── apple-touch-icon.png provisorio
 │       └── og-image.jpg        1200×630
 ├── robots.txt
+├── .htaccess                   solo para Apache/Hostinger (GitHub Pages lo ignora)
 ├── DOCUMENTACION.md            documentación completa del trabajo
 ├── AGENTS.md / CLAUDE.md / GEMINI.md   guía para agentes
 └── README.md
@@ -65,6 +66,14 @@ Para probar como en GitHub Pages bajo subruta, sirve la carpeta padre y entra po
 2. En **Settings → Pages → Custom domain**, escribe el dominio (GitHub crea el archivo `CNAME`).
 3. Activa **Enforce HTTPS**.
 4. Cuando el dominio sea definitivo, cambia los `hreflang` y las `og:image` a URLs absolutas (hoy son relativas porque el dominio no está definido).
+
+## Publicar una nueva versión (caché)
+
+Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261016`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
+
+```bash
+grep -rl 'v=20261016' --include=index.html . | xargs sed -i 's/v=20261016/v=20261120/g'   # usa la fecha de hoy
+```
 
 ## Qué se edita en `config.js`
 

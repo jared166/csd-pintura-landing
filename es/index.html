@@ -28,12 +28,13 @@
   <meta name="twitter:image" content="../assets/img/og-image.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap">
-  <link rel="stylesheet" href="../assets/css/styles.css">
+  <!-- Inter sin bloquear el render (display=swap); <noscript> como respaldo -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap"></noscript>
+  <link rel="stylesheet" href="../assets/css/styles.css?v=20261016">
   <script>document.documentElement.classList.add("js")</script>
-  <script type="module" src="../assets/js/tracking.js"></script>
-  <script type="module" src="../assets/js/main.js"></script>
-  <script type="module" src="../assets/js/form.js"></script>
+  <script type="module" src="../assets/js/main.js?v=20261016"></script>
+  <script type="module" src="../assets/js/form.js?v=20261016"></script>
   <!-- Si CONFIG.heroImage tiene valor, descomente y ajuste para mejorar el LCP: -->
   <!-- <link rel="preload" as="image" href="../assets/img/work/hero.webp" fetchpriority="high"> -->
   <script type="application/ld+json">
@@ -96,6 +97,7 @@
 <body class="page-home">
   <a class="skip-link" href="#main">Saltar al contenido</a>
   <header class="site-header" data-header>
+    <div class="scroll-progress" aria-hidden="true"></div>
     <div class="container site-header__inner">
       <a class="brand" href="../es/" aria-label="CSD Good Services, inicio">
         <!-- [PENDIENTE] logo oficial: copiar el archivo del cliente en assets/img/logo-csd.svg (no recrear) -->
@@ -111,7 +113,7 @@
 
   <main id="main">
     <section class="hero" id="hero" aria-labelledby="hero-title">
-      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="hero__bg" aria-hidden="true"><span class="mesh"></span><span class="grain"></span></div>
       <div class="container hero__inner">
         <div class="hero__content">
           <h1 class="hero__title" id="hero-title" data-h-office="Pintura de oficinas en Miami, hecha por nuestro propio equipo" data-h-exterior="Pintura exterior para negocios en Miami, hecha por nuestro propio equipo" data-h-warehouse="Pintura de almacenes en Miami, hecha por nuestro propio equipo">Pintura comercial en Miami, hecha por nuestro propio equipo</h1>
@@ -132,11 +134,12 @@
           <span class="hero__orb hero__orb--violet"></span>
           <span class="hero__orb hero__orb--magenta"></span>
           <div class="fan">
-          <span class="swatch swatch--1"><span></span><span></span><span></span></span>
-          <span class="swatch swatch--2"><span></span><span></span><span></span></span>
-          <span class="swatch swatch--3"><span></span><span></span><span></span></span>
-          <span class="swatch swatch--4"><span></span><span></span><span></span></span>
-          <span class="swatch swatch--5"><span></span><span></span><span></span></span>
+          <span class="swatch swatch--1" style="--i:0"><i></i><i></i><i></i><i></i></span>
+          <span class="swatch swatch--2" style="--i:1"><i></i><i></i><i></i><i></i></span>
+          <span class="swatch swatch--3" style="--i:2"><i></i><i></i><i></i><i></i></span>
+          <span class="swatch swatch--4" style="--i:3"><i></i><i></i><i></i><i></i></span>
+          <span class="swatch swatch--5" style="--i:4"><i></i><i></i><i></i><i></i></span>
+            <span class="fan__rivet"></span>
           </div>
           <span class="hero__line"></span>
         </div>
@@ -170,7 +173,7 @@
     <section class="section section--alt" id="why" aria-labelledby="why-title">
       <div class="container">
         <h2 class="section__title reveal" id="why-title">Por qué trabajar con CSD</h2>
-        <div class="grid grid--2">
+        <div class="bento">
           <article class="card why reveal">
             <span class="card__icon"><svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20"/><circle cx="10" cy="8" r="3.5"/><path d="M20 20v-1.5a3.5 3.5 0 0 0-2.5-3.35M15.5 4.65a3.5 3.5 0 0 1 0 6.7"/></svg></span>
             <h3 class="card__title">Nuestro propio equipo</h3>
@@ -206,6 +209,9 @@
           <li class="chip">Restaurantes</li>
           <li class="chip">Otros espacios comerciales</li>
         </ul>
+      </div>
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__track"><span class="ticker__item">Oficinas</span><span class="ticker__item">Tiendas</span><span class="ticker__item">Almacenes</span><span class="ticker__item">Restaurantes</span><span class="ticker__item">Otros espacios comerciales</span><span class="ticker__item">Oficinas</span><span class="ticker__item">Tiendas</span><span class="ticker__item">Almacenes</span><span class="ticker__item">Restaurantes</span><span class="ticker__item">Otros espacios comerciales</span></div>
       </div>
     </section>
 
@@ -277,7 +283,7 @@
     </section>
 
     <section class="section quote" id="quote" aria-labelledby="quote-title">
-      <div class="quote__glow" aria-hidden="true"></div>
+      <div class="quote__glow" aria-hidden="true"><span class="mesh mesh--quote"></span></div>
       <div class="container quote__inner">
         <div class="quote__intro">
           <h2 class="section__title" id="quote-title">Cuéntenos sobre su espacio</h2>

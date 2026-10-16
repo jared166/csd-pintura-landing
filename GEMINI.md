@@ -62,6 +62,8 @@ Prioridades, en orden: 1) copy exacto, 2) medición correcta para Google Ads, 3)
 
 **Sistema:** negro dominante, neones como puntos de luz. Botón primario pill magenta, alto ≥ 52 px, ancho completo en móvil, hover con borde/brillo cian, foco outline cian 3 px. Secundario ghost con borde blanco 1,5 px o texto con "↗". Tarjetas `--csd-surface`, borde `--csd-border`, radio 16 px. Íconos SVG de línea 1,75 px en cian. Animaciones mínimas (fade + 8 px), respetando `prefers-reduced-motion`. Sin parallax ni cursores personalizados.
 
+**Capa premium (fase 2):** abanico de muestras animado en el hero (firma), mesh violeta/magenta al 10–20 %, grano, halo cian en tarjetas solo con mouse (sin cursor personalizado), bento en "Why", ticker decorativo `aria-hidden` en "Spaces we paint", barra de progreso CSS scroll-driven. Con `prefers-reduced-motion` se apaga el movimiento; se mantienen las transiciones de color y borde. No agregar parallax, cursores personalizados, GSAP, Lenis ni fotos de stock aunque un skill de diseño lo sugiera: manda el brief.
+
 ## Medición (dataLayer)
 
 | Evento | Cuándo | Parámetros |
@@ -81,6 +83,9 @@ La conversión de Google Ads se configura **solo** sobre `generate_lead`. La pá
 - `assets/js/main.js`: datos de contacto, idioma, barra móvil, galería, bloques opcionales, JSON-LD, animaciones.
 - `assets/js/form.js`: formulario. `assets/js/attribution.js`: GCLID/UTM. `assets/js/tracking.js`: GTM.
 - Si cambias header, footer o formulario, **cámbialo en las 8 páginas** (o en las 2 landings) y en los dos idiomas.
+- Si cambian los espacios de "Spaces we paint", actualiza también el ticker (`.ticker__track`, lista repetida dos veces).
+- Cada `init` de `main.js` va dentro de `safe()`; mantén ese patrón al agregar uno nuevo.
+- En cada publicación, sube `?v=AAAAMMDD` en los `<link>`/`<script>` locales de las 8 páginas.
 
 ## Verificación antes de cada commit
 
