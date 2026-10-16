@@ -21,7 +21,7 @@ Después, en una segunda fase, se aplicó una capa de diseño premium (ver secci
 | --- | --- |
 | Pruebas funcionales automatizadas (sección 12 del brief) | 102/102 OK |
 | Scroll horizontal entre 360 y 1440 px | Ninguno |
-| Recursos rotos bajo subruta `/csd-landing-painting/` | Ninguno (salvo el logo, pendiente del cliente) |
+| Recursos rotos bajo subruta `/csd-landing-painting/` | Ninguno |
 | Palabras prohibidas en copy visible | Ninguna |
 | Scripts de Google sin `gtmId` | Ninguno |
 
@@ -66,9 +66,9 @@ Cada idioma es una **página HTML ya renderizada** (no texto inyectado por JS): 
 7. **Mensajes de validación** (no estaban en el brief): cortos, en el idioma de la página, con "usted" en español. Ej.: "Please enter a valid 10-digit US phone number." / "Ingrese un teléfono válido de EE. UU. de 10 dígitos."
 8. **Etiqueta "Optional" / "Opcional"** junto a los dos campos opcionales (tamaño y mensaje), como ayuda de interfaz; no altera el copy de las etiquetas.
 9. **"give us a call" / "llámenos" en la FAQ de viviendas** se convierte en link `tel:` solo si hay teléfono (por eso existe la ubicación `faq` en `click_to_call`). Sin teléfono queda como texto.
-10. **Logo pendiente.** El `<img>` apunta a `assets/img/logo-csd.svg`. Si el archivo no existe, se oculta visualmente (opacidad 0) y conserva su espacio y su `alt` para lectores de pantalla. No se muestra el nombre escrito con otra fuente, porque el manual lo prohíbe.
-11. **Favicon provisorio**: una "C" cian sobre negro, dibujada como trazo SVG (no como letra de una fuente). Reemplazar por el isotipo oficial.
-12. **Imagen OG** generada: fondo `#0A0A0A`, H1 por defecto en blanco y línea cian. Sin logo (no está disponible) y sin fotos.
+10. **Logo** _(resuelto en la fase 3, ver sección 9.6)_. Mientras faltaba, el `<img>` apuntaba a `assets/img/logo-csd.svg`. Si el archivo no existe, se oculta visualmente (opacidad 0) y conserva su espacio y su `alt` para lectores de pantalla. No se muestra el nombre escrito con otra fuente, porque el manual lo prohíbe.
+11. **Favicon** _(fase 3)_: recorte del monograma "CSD" del logo oficial sobre `#0A0A0A` (reemplazó a la "C" provisoria).
+12. **Imagen OG** generada: fondo `#0A0A0A`, logo oficial, H1 por defecto en blanco y línea cian. Sin fotos.
 13. **Campos extra en `config.js`**: `openingHoursSchema` (horario en formato schema.org para JSON-LD: el texto libre de `hours_en` no es válido ahí) y `heroImageAlt_en/_es` (texto alternativo de la foto del hero).
 14. **`hreflang` y `og:image` relativos**: el dominio final no está definido. Cuando lo esté, conviene pasarlos a URLs absolutas.
 15. **Reseñas:** si algún día se activan, el bloque usa el título "Google reviews" / "Reseñas de Google" y el link "See on Google ↗" / "Ver en Google ↗". Sin estrellas.
@@ -163,14 +163,14 @@ Todos los campos + `phone_e164`, `lead_type` (`residential` si la propiedad es v
 Se automatizó con Playwright (Chromium headless) sirviendo el sitio bajo `/csd-landing-painting/`:
 
 1. **Capturas** EN y ES en 360×800, 768×1024 y 1440×900: revisadas hero, barra móvil, formulario y pie. Sin scroll horizontal.
-2. **Subruta**: sin recursos rotos (único 404: `logo-csd.svg`, pendiente).
+2. **Subruta**: sin recursos rotos.
 3. **Formulario**: a) comercial, b) residencial, c) validación, d) honeypot y envío < 3 s, e) falla a los 10 s con mensaje de plan B. Además: envío real `cors-json` contra un webhook simulado con redirección a `es/gracias/`.
 4. **Atribución**: GCLID persiste tras cambiar de idioma y enviar sin parámetros; con storage bloqueado no hay errores y el GCLID llega desde memoria.
 5. **Titulares**: `office`, `exterior`, `warehouse` en EN y ES; `<script>`, claves desconocidas, mayúsculas y vacías dejan el H1 por defecto.
 6. **Configuración vacía**: sin `tel:`, sin `mailto:`, sin `href=""`, sin galería, 4 pasos, sin bloques opcionales, sin scripts de Google y sin "[PENDIENTE]", "undefined" ni "null" en las 8 páginas. Con la configuración completa: GTM carga, aparecen los 4 `tel:` con su `location`, 5 pasos con `siteVisit`, cross-sell, pie completo, JSON-LD `LocalBusiness`, barra móvil que aparece después del hero y se oculta en el formulario, eventos `click_to_call` y `language_switch`.
 7. **Copy y palabras prohibidas**: verificado.
 8. **Contraste**: todo texto blanco sobre magenta es de 19 px y peso 700; no hay texto violeta.
-9. **Rendimiento**: Lighthouse móvil 100 / 100 / 96 / 54 (ver sección 9.5).
+9. **Rendimiento**: Lighthouse móvil 100 / 100 / 100 / 54 (ver secciones 9.5 y 9.6).
 
 ---
 
@@ -213,24 +213,33 @@ El brief del cliente tiene prioridad sobre el skill. Estos desvíos son intencio
 | Todo en WebP | `og-image.jpg` y `apple-touch-icon.png` se mantienen | Facebook, LinkedIn, WhatsApp e iOS los requieren en JPG/PNG |
 | No gatear nada con reduced-motion | Se gatea solo el movimiento | El brief pide respetar `prefers-reduced-motion` |
 
-El verificador del skill (`verify_project.py`) marca esos puntos como errores. Todos corresponden a esta tabla o a activos pendientes del cliente (`logo-csd.svg`; `hero.webp` aparece solo en una línea comentada).
+El verificador del skill (`verify_project.py`) marca esos puntos como errores. Todos corresponden a esta tabla (`hero.webp` aparece solo en una línea comentada).
 
 ### 9.5 Resultados después de la capa premium
 | Métrica (Lighthouse 12, móvil, servidor con gzip como GitHub Pages) | EN | ES |
 | --- | --- | --- |
 | Rendimiento | **100** | **100** |
 | Accesibilidad | **100** | **100** |
-| Buenas prácticas | 96 | 96 |
+| Buenas prácticas | 96 → **100** con el logo | 96 → **100** con el logo |
 | SEO | 54 | 54 |
 | LCP | 1,3 s | 1,3 s |
 | CLS | 0 | 0 |
 | TBT | 0 ms | 0 ms |
 
-- **Buenas prácticas 96:** el único fallo es el 404 de `logo-csd.svg` (pendiente del cliente). Desaparece al subir el logo.
+- **Buenas prácticas:** el 96 se debía solo al 404 del logo pendiente. Con el logo cargado (fase 3) es 100.
 - **SEO 54, intencional:** se debe al `noindex` (una landing de anuncios no debe competir con el sitio principal) y a los `hreflang` relativos (el dominio aún no está definido). No afecta a Google Ads.
 - **Peso por landing:** ~106 KB de HTML + CSS + JS sin comprimir (límite: 120 KB) y ~28 KB con gzip.
 - **Pruebas funcionales:** 102/102 OK después de la capa premium.
 - **Contraste medido en el navegador:** ningún texto blanco sobre magenta por debajo de 19 px/700, ningún texto violeta, ningún texto < 14 px, un solo `h1` por página.
+
+### 9.6 Fase 3: logo oficial
+- **Archivo:** el PNG entregado por el cliente (331×152, fondo transparente) se recortó solo en su margen transparente y quedó como `assets/img/logo-csd.png` (266×119). No se redibujó, no se recoloreó y no se le agregaron sombras ni trazos.
+- **Dónde aparece:** header y pie de las 8 páginas (con `width`/`height` reales, sin salto de layout), imagen OG (`og-image.jpg`), favicon (`favicon-32.png`, `favicon.png`) e ícono de iOS (`apple-touch-icon.png`). Los íconos usan el monograma "CSD" del mismo archivo, recortado y escalado sobre `#0A0A0A`, porque la línea "GOOD SERVICES LLC" no se lee a 32 px. Se eliminó el `favicon.svg` provisorio.
+- **Tamaños:** 120 px de ancho en móvil (el mínimo del manual), 140 px en escritorio y 180 px en el pie. El área de resguardo horizontal (≥ altura de la "D") se respeta con el espacio libre entre el logo y el resto del header.
+- **Desvío del brief:** el header pasa de 60 a **72 px en móvil** y de 76 a **84 px en escritorio**. Con 120 px de ancho, el logo mide 54 px de alto; en 60 px quedaba pegado a los bordes. Entre "header de 60 px" y "logo de 120 px mínimo con resguardo" se priorizó la identidad de marca (prioridad 3 del brief, por encima de velocidad y detalle de layout).
+- **Caché:** versión de los assets subida a `?v=20261016.2`.
+- **Resultado:** cero 404 en las 8 páginas. Lighthouse móvil EN y ES: rendimiento 100 (LCP 1,4 s, CLS 0), accesibilidad 100, buenas prácticas **100**, SEO 54 (intencional). Pruebas funcionales: 102/102.
+- **Mejora opcional:** el archivo recibido tiene poca resolución (331 px de ancho). En pantallas retina el pie (180 px → 360 px físicos) lo escala apenas. Si CSD tiene el logo en SVG o en PNG de mayor resolución, conviene reemplazarlo.
 
 ## 10. Pendientes (`[PENDIENTE]`)
 
@@ -247,8 +256,6 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 - `gallery`, `heroImage`, `beforeAfter`: fotos reales.
 
 **En el contenido y los activos**
-- Logo oficial en `assets/img/logo-csd.svg` (o PNG ajustando la ruta).
-- Isotipo oficial para el favicon (hoy provisorio).
 - Textos legales revisados por abogado en las 4 páginas legales. **No lanzar campañas sin esto.**
 - Revisión legal del texto de consentimiento (si piden casilla, se agrega).
 - Con el dominio definitivo: `hreflang` y `og:image` absolutos.
@@ -268,3 +275,4 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 | --- | --- |
 | 1 · Construcción | Estructura, copy EN/ES, formulario, atribución, medición, SEO, accesibilidad, README y guías para agentes |
 | 2 · Capa premium | Abanico de muestras animado, mesh, grano, bento, halo en tarjetas, ticker, barra de progreso, timeline, cache-busting, `.htaccess`, `safe()`, fuentes sin bloquear el render |
+| 3 · Logo oficial | Logo en header, pie e imagen OG; favicon e ícono de iOS desde el monograma; header 72/84 px |

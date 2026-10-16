@@ -29,11 +29,11 @@ Landing de captación para el servicio de **pintura comercial** de CSD Good Serv
 │   ├── js/form.js              validación, antispam, envío al webhook, plan B
 │   ├── js/tracking.js          GTM + dataLayer (solo si hay ID)
 │   └── img/
-│       ├── logo-csd.svg        [PENDIENTE] logo oficial del cliente (no recrear)
+│       ├── logo-csd.png        logo oficial del cliente (266×119, fondo transparente; no recrear)
 │       ├── work/               fotos reales de trabajos
-│       ├── favicon.svg         provisorio ("C" cian sobre negro)
-│       ├── apple-touch-icon.png provisorio
-│       └── og-image.jpg        1200×630
+│       ├── favicon.png / favicon-32.png  monograma "CSD" del logo oficial sobre #0A0A0A
+│       ├── apple-touch-icon.png          ídem, 180×180
+│       └── og-image.jpg        1200×630 (logo oficial + H1 por defecto)
 ├── robots.txt
 ├── .htaccess                   solo para Apache/Hostinger (GitHub Pages lo ignora)
 ├── DOCUMENTACION.md            documentación completa del trabajo
@@ -69,10 +69,10 @@ Para probar como en GitHub Pages bajo subruta, sirve la carpeta padre y entra po
 
 ## Publicar una nueva versión (caché)
 
-Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261016`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
+Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261016.2`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
 
 ```bash
-grep -rl 'v=20261016' --include=index.html . | xargs sed -i 's/v=20261016/v=20261120/g'   # usa la fecha de hoy
+grep -rl 'v=20261016.2' --include=index.html . | xargs sed -i 's/v=20261016.2/v=20261120/g'   # usa la fecha de hoy
 ```
 
 ## Qué se edita en `config.js`
@@ -166,7 +166,7 @@ Agrega `?h=office`, `?h=exterior` o `?h=warehouse` a la URL final del anuncio. E
 - [ ] Webhook probado de punta a punta en GoHighLevel (modo `cors-json` o `no-cors`), con `gclid` llegando al contacto.
 - [ ] GTM con la conversión de Google Ads configurada sobre `generate_lead` (y conversiones mejoradas con `user_data`).
 - [ ] Fotos reales cargadas (`gallery`, opcional `heroImage`, `beforeAfter`).
-- [ ] Logo oficial en `assets/img/logo-csd.svg` (o PNG; ajustar la ruta en el HTML). Isotipo oficial para reemplazar el favicon provisorio.
+- [x] Logo oficial en `assets/img/logo-csd.png`. Favicon e ícono de iOS generados a partir del monograma "CSD" del logo. (Si CSD entrega una versión SVG o de mayor resolución, reemplazar el archivo y la ruta en las 8 páginas.)
 - [ ] `crossSellUrl_en` / `crossSellUrl_es` con las landings de limpieza.
 - [ ] `siteVisit` confirmado.
 - [ ] `noindex` revisado (por defecto queda `noindex`, que es lo correcto para una landing de anuncios).
