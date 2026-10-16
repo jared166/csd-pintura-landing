@@ -57,7 +57,29 @@ Cada idioma es una **página HTML ya renderizada** (no texto inyectado por JS): 
 | `form.js` | Validación, antispam, payload, envío al webhook, eventos y plan B |
 
 ### 2.4 Decisiones tomadas por cuenta propia
-1. **Variantes del H1 en el propio HTML.** Los textos de `?h=office|exterior|warehouse` viven como atributos `data-h-*` del `<h1>`, y un script inline de una línea, ubicado justo después del H1, los aplica **antes del primer pintado** (un módulo diferido llegaría tarde y provocaría parpadeo). Solo se elige entre textos definidos: nunca se inserta texto de la URL.
+1. **Variantes del H1 en el propio HTML.** Los textos de cada variante viven como atributos `data-h-*` del `<h1>`, y un script inline de una línea, ubicado justo después del H1, los aplica **antes del primer pintado** (un módulo diferido llegaría tarde y provocaría parpadeo). Solo se elige entre textos definidos: nunca se inserta texto de la URL.
+
+   **Variantes vigentes** (alineadas con las campañas de Google Ads en inglés y con los tipos de propiedad del formulario). Todo el tráfico pago llega en inglés; el español es solo respaldo si el usuario cambia de idioma.
+
+   | `?h=` | EN (`index.html`) | ES (`es/index.html`) |
+   | --- | --- | --- |
+   | _(sin `h`)_ | Commercial Painting in Miami, Done by Our Own Crew | Pintura comercial en Miami, hecha por nuestro propio equipo |
+   | `office` | Professional Office Painting in Miami, Done by Our Own Crew | Pintura profesional de oficinas en Miami, hecha por nuestro propio equipo |
+   | `retail` | Professional Retail Store Painting in Miami, Done by Our Own Crew | Pintura profesional de tiendas en Miami, hecha por nuestro propio equipo |
+   | `warehouse` | Professional Warehouse Painting in Miami, Done by Our Own Crew | Pintura profesional de almacenes en Miami, hecha por nuestro propio equipo |
+   | `restaurant` | Professional Restaurant Painting in Miami, Done by Our Own Crew | Pintura profesional de restaurantes en Miami, hecha por nuestro propio equipo |
+   | `residential` | Residential Painting in Miami? Talk Directly to Our Own Crew | ¿Pintura residencial en Miami? Hable directamente con nuestro propio equipo |
+
+   **Criterio del copy:** cada titular repite la palabra clave del grupo de anuncios (coincidencia anuncio → página, que favorece el nivel de calidad y la tasa de conversión) y cierra con el diferencial confirmado ("our own crew" / "nuestro propio equipo"). Respeta las reglas de contenido: sin precios, plazos, garantías, "best" ni "free". En `residential`, la página sigue diciendo en su FAQ que es de pintura comercial; por eso el titular invita a hablar con el equipo y no promete el servicio.
+
+   **Retiradas:** `exterior` (y el `data-h-exterior` de ambos idiomas).
+
+   **⚠️ Estado de activación:** el script inline no se modificó (por instrucción). Su lista blanca sigue siendo `office`, `exterior`, `warehouse`, así que hoy:
+   - `office` y `warehouse` funcionan.
+   - `retail`, `restaurant` y `residential` muestran el H1 por defecto.
+   - `exterior` deja el H1 **vacío**, porque el script acepta la clave pero el atributo ya no existe.
+
+   Para activar las 5 variantes hay que actualizar la lista blanca del script en `index.html` y `es/index.html`, y `HEADLINE_KEYS` en `assets/js/attribution.js` (para que `h_param` llegue al CRM). Pendiente de aprobación.
 2. **`noindex` estático en el HTML.** Google puede no renderizar JS si el HTML inicial ya trae `noindex`, así que la etiqueta va escrita en las 8 páginas. `config.noindex` la mantiene; para indexar hay que poner `false` y borrar la línea (comando en el README).
 3. **GTM inyectado desde `tracking.js`** con el snippet oficial, porque el ID vive en `config.js`. El `<noscript>` de GTM no se incluye: no puede leer `config.js`, y sin JS el formulario no funciona, así que no se pierde ninguna conversión.
 4. **Botón "Request a Quote" del header oculto en móvil (< 900 px).** En 360 px no entran logo (mín. 120 px) + idioma + teléfono + un botón primario de 19 px. En móvil la acción la cubren el botón del hero y la barra inferior fija.
@@ -166,7 +188,7 @@ Se automatizó con Playwright (Chromium headless) sirviendo el sitio bajo `/csd-
 2. **Subruta**: sin recursos rotos.
 3. **Formulario**: a) comercial, b) residencial, c) validación, d) honeypot y envío < 3 s, e) falla a los 10 s con mensaje de plan B. Además: envío real `cors-json` contra un webhook simulado con redirección a `es/gracias/`.
 4. **Atribución**: GCLID persiste tras cambiar de idioma y enviar sin parámetros; con storage bloqueado no hay errores y el GCLID llega desde memoria.
-5. **Titulares**: `office`, `exterior`, `warehouse` en EN y ES; `<script>`, claves desconocidas, mayúsculas y vacías dejan el H1 por defecto.
+5. **Titulares** (verificación original, con las variantes de entonces): `office`, `exterior`, `warehouse` en EN y ES; `<script>`, claves desconocidas, mayúsculas y vacías dejan el H1 por defecto. Las variantes vigentes y su estado de activación están en la sección 2.4, punto 1.
 6. **Configuración vacía**: sin `tel:`, sin `mailto:`, sin `href=""`, sin galería, 4 pasos, sin bloques opcionales, sin scripts de Google y sin "[PENDIENTE]", "undefined" ni "null" en las 8 páginas. Con la configuración completa: GTM carga, aparecen los 4 `tel:` con su `location`, 5 pasos con `siteVisit`, cross-sell, pie completo, JSON-LD `LocalBusiness`, barra móvil que aparece después del hero y se oculta en el formulario, eventos `click_to_call` y `language_switch`.
 7. **Copy y palabras prohibidas**: verificado.
 8. **Contraste**: todo texto blanco sobre magenta es de 19 px y peso 700; no hay texto violeta.
