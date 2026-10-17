@@ -78,7 +78,8 @@ La conversión de Google Ads se configura **solo** sobre `generate_lead`. La pá
 
 ## Dónde está cada cosa
 
-- `assets/js/config.js`: **toda** la configuración editable.
+- `assets/js/config.js`: **toda** la configuración editable. Ya tiene los datos reales de la empresa (de los textos legales del cliente): nombre legal, dirección, teléfono principal (botones de llamada) y secundario (solo pie, `data-tel="secondary"`), email y `siteVisit: true`. Solo faltan `webhookUrl` y `gtmId`.
+- Textos legales (`privacy/`, `terms/`, `es/privacidad/`, `es/terminos/`) y consentimiento del formulario: texto aprobado por el cliente; no editar sin su aprobación. Los SMS son solo notificaciones de la solicitud, nunca marketing.
 - `index.html` / `es/index.html`: copy literal pre-renderizado (sin parpadeo, SEO). Las variantes del H1 están en atributos `data-h-*` del propio `<h1>`.
 - `assets/js/main.js`: datos de contacto, idioma, barra móvil, galería, bloques opcionales, JSON-LD, animaciones.
 - `assets/js/form.js`: formulario. `assets/js/attribution.js`: GCLID/UTM. `assets/js/tracking.js`: GTM.
@@ -99,7 +100,7 @@ La conversión de Google Ads se configura **solo** sobre `generate_lead`. La pá
    e) falla → con un webhook que no responde, a los 10 s aparece el mensaje con teléfono y email.
 4. **Atribución:** entrar con `?gclid=TEST123`, ir a `/es/` y enviar sin parámetros → el gclid sigue en el payload. Con storage bloqueado, sin errores.
 5. **Titulares:** `?h=office|retail|warehouse|restaurant|residential` cambian el H1 en EN y ES y llegan al payload como `headline_variant` y `h_param`; `?h=exterior` (retirada), `?h=<script>` o claves desconocidas dejan el H1 por defecto. Para agregar una variante, toca a la vez el `data-h-*` de los dos HTML, la lista del script inline y `HEADLINE_KEYS` de `attribution.js`.
-6. **Configuración vacía:** sin teléfono no hay `tel:`; sin galería no hay sección; sin GTM no hay scripts de Google; `siteVisit: false` → 4 pasos; nunca "[PENDIENTE]", "undefined" ni "null" en pantalla.
+6. **Configuración vacía** (probar con una copia de `config.js` con los campos de contacto vacíos y `siteVisit: false`, porque el `config.js` real ya tiene datos): sin teléfono no hay `tel:`; sin galería no hay sección; sin GTM no hay scripts de Google; `siteVisit: false` → 4 pasos; nunca "[PENDIENTE]", "undefined" ni "null" en pantalla.
 7. **Copy y reglas:** comparar con el brief palabra por palabra. Buscar y confirmar que no aparecen: free, gratis, cheap, affordable, barato, guarantee, garantía, licensed, insured, on time, best, #1, bodega, presupuesto, tú, vos. Excepciones: las claves de config `optionalBlocks.guarantee` y los **textos legales oficiales** (`privacy/`, `terms/`, `es/privacidad/`, `es/terminos/`), que se publican literal tal como los entregó el cliente ("garantías" en la cláusula de exención; "presupuesto(s)" pendiente de decisión, ver `DOCUMENTACION.md` §9.7). Los textos legales no se editan sin aprobación del cliente.
 8. **Contraste:** nada de blanco sobre magenta < 19 px negrita; nada de texto violeta.
 9. **Rendimiento:** Lighthouse móvil ≥ 90 en rendimiento, accesibilidad y buenas prácticas (SEO baja por el `noindex`, es intencional). Peso HTML+CSS+JS < 120 KB por página.

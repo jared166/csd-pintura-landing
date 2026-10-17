@@ -1,0 +1,8 @@
+# GitHub Pages (Jekyll): el sitio son los HTML estáticos. La documentación
+# interna del repositorio no se publica en la web.
+exclude:
+  - README.md
+  - DOCUMENTACION.md
+  - AGENTS.md
+  - CLAUDE.md
+  - GEMINI.md

@@ -9,7 +9,7 @@
 import { CONFIG } from "./config.js";
 import { track, trackAndWait, GTM_ENABLED } from "./tracking.js"; // also loads GTM (first import)
 import "./attribution.js";
-import { LANG, has, pick, assetUrl, safeUrl, telHref, configEmail } from "./util.js";
+import { LANG, has, pick, assetUrl, safeUrl, telHref, phoneFor, configEmail } from "./util.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -40,10 +40,12 @@ function fillConfigData() {
 
   const tel = telHref();
   $$("[data-tel]").forEach((a) => {
-    if (!tel) return drop(a);
-    a.href = tel;
-    $$("[data-phone-text]", a).forEach((span) => (span.textContent = CONFIG.phone.trim()));
-    if (a.hasAttribute("data-tel-label")) a.setAttribute("aria-label", `${T.call} ${CONFIG.phone.trim()}`);
+    // data-tel="secondary" → second phone (footer only); anything else → primary
+    const phone = phoneFor(a.dataset.tel === "secondary" ? "secondary" : "primary");
+    if (!phone.href) return drop(a);
+    a.href = phone.href;
+    $$("[data-phone-text]", a).forEach((span) => (span.textContent = phone.text));
+    if (a.hasAttribute("data-tel-label")) a.setAttribute("aria-label", `${T.call} ${phone.text}`);
     reveal(a);
   });
 
