@@ -475,6 +475,12 @@ body.has-sticky-bar { padding-bottom: calc(76px + env(safe-area-inset-bottom)); 
 .inline-list li { display: inline-flex; align-items: center; }
 .inline-list li + li::before { content: "·"; margin: 0 10px; color: #555; }
 .inline-list a { display: inline-flex; align-items: center; min-height: 44px; }
+/* Pie en móvil: datos de contacto uno debajo del otro (sin separadores sueltos al inicio de línea) */
+@media (max-width: 767px) {
+  .site-footer__contact, .site-footer__legal { flex-direction: column; align-items: flex-start; }
+  .site-footer__contact li + li::before, .site-footer__legal li + li::before { content: none; }
+  .site-footer__contact li:first-child { min-height: 44px; }
+}
 
 /* Inner pages (thank-you, legal) ----------------------------------------- */
 .page-main { min-height: 70vh; }

@@ -42,16 +42,24 @@ export function safeUrl(value) {
 }
 
 /**
- * tel: href built from config. Empty unless CONFIG.phone has a value
- * (the visible number), so the page never shows an empty or orphan tel: link.
+ * Phone from config: "primary" (CONFIG.phone, used by every call button) or
+ * "secondary" (CONFIG.phoneSecondary, footer only). Returns { text, href };
+ * both empty unless the visible number has a value, so the page never shows
+ * an empty or orphan tel: link.
  */
-export function telHref() {
-  if (!has(CONFIG.phone)) return "";
-  const e164 = (CONFIG.phoneE164 || "").replace(/[^\d+]/g, "");
-  if (/^\+1\d{10}$/.test(e164)) return `tel:${e164}`;
-  let digits = CONFIG.phone.replace(/\D/g, "");
+export function phoneFor(which = "primary") {
+  const text = String((which === "secondary" ? CONFIG.phoneSecondary : CONFIG.phone) || "").trim();
+  if (!text) return { text: "", href: "" };
+  const e164 = String((which === "secondary" ? CONFIG.phoneSecondaryE164 : CONFIG.phoneE164) || "").replace(/[^\d+]/g, "");
+  if (/^\+1\d{10}$/.test(e164)) return { text, href: `tel:${e164}` };
+  let digits = text.replace(/\D/g, "");
   if (digits.length === 11 && digits.startsWith("1")) digits = digits.slice(1);
-  return digits.length === 10 ? `tel:+1${digits}` : "";
+  return { text, href: digits.length === 10 ? `tel:+1${digits}` : "" };
+}
+
+/** tel: href of the primary phone ("" if not configured). */
+export function telHref() {
+  return phoneFor("primary").href;
 }
 
 /** Valid email from config, or "". */

@@ -35,6 +35,7 @@ Landing de captación para el servicio de **pintura comercial** de CSD Good Serv
 │       ├── apple-touch-icon.png          ídem, 180×180
 │       └── og-image.jpg        1200×630 (logo oficial + H1 por defecto)
 ├── robots.txt
+├── _config.yml                 excluye la documentación interna de GitHub Pages
 ├── .htaccess                   solo para Apache/Hostinger (GitHub Pages lo ignora)
 ├── DOCUMENTACION.md            documentación completa del trabajo
 ├── AGENTS.md / CLAUDE.md / GEMINI.md   guía para agentes
@@ -65,7 +66,13 @@ Para probar como en GitHub Pages bajo subruta, sirve la carpeta padre y entra po
 1. Crea un registro DNS `CNAME` que apunte a `usuario.github.io`.
 2. En **Settings → Pages → Custom domain**, escribe el dominio (GitHub crea el archivo `CNAME`).
 3. Activa **Enforce HTTPS**.
-4. Cuando el dominio sea definitivo, cambia los `hreflang` y las `og:image` a URLs absolutas (hoy son relativas porque el dominio no está definido).
+4. Los `hreflang`, `og:image`, `og:url` y `twitter:image` usan URLs absolutas con la base `https://jared166.github.io/csd-pintura-landing/`. Con un dominio propio, reemplaza esa base en las 8 páginas:
+
+   ```bash
+   grep -rl 'https://jared166.github.io/csd-pintura-landing/' --include=index.html . | xargs sed -i 's#https://jared166.github.io/csd-pintura-landing/#https://TU-DOMINIO/#g'
+   ```
+
+`_config.yml` evita que GitHub Pages publique la documentación interna (`*.md`) como páginas web.
 
 ## Publicar una nueva versión (caché)
 
@@ -80,6 +87,7 @@ grep -rl 'v=20261017' --include=index.html . | xargs sed -i 's/v=20261017/v=2026
 | Campo | Para qué sirve | Si está vacío |
 | --- | --- | --- |
 | `legalName` | Nombre legal en el pie y en JSON-LD | Se ocultan esa línea y el ©; no se genera `LocalBusiness` |
+| `phoneSecondary` / `phoneSecondaryE164` | Segundo teléfono, solo en el pie (`<a data-tel="secondary">`) | No se muestra |
 | `phone` / `phoneE164` | Teléfono visible `(305) 555-0123` y link `tel:+13055550123` | No aparece ningún `tel:` (ni en el header, ni en la barra móvil, ni en el pie) |
 | `email` | Pie y mensaje de error del formulario | Se oculta |
 | `address` | Pie y JSON-LD | Se oculta |
@@ -92,7 +100,7 @@ grep -rl 'v=20261017' --include=index.html . | xargs sed -i 's/v=20261017/v=2026
 | `heroImage` + `heroImageAlt_en/_es` | Foto real del hero | Composición abstracta en CSS |
 | `gallery` | `[{ src, width, height, alt_en, alt_es, caption_en, caption_es, srcset? }]` | No se muestra la sección "Our work" |
 | `beforeAfter` | `[{ before, after, alt_en, alt_es }]` (pares reales) | No se muestra el slider |
-| `siteVisit` | `true` si CSD visita antes de cotizar | "How it works" queda en 4 pasos |
+| `siteVisit` | `true` si CSD visita antes de cotizar (hoy `true`, por los Términos §2) | "How it works" queda en 4 pasos |
 | `optionalBlocks` | `{ reviews, guarantee, licenseInsurance }` | Apagados por defecto |
 | `googleReviews` + `googleProfileUrl` | Reseñas reales copiadas del perfil | El bloque no se muestra |
 | `guaranteeText_*`, `licenseText_*` | Texto aprobado por CSD | El bloque no se muestra |
@@ -175,14 +183,16 @@ Agrega `?h=` a la URL final de cada grupo de anuncios (las campañas pagas son e
 
 ## Checklist de lanzamiento (bloqueantes)
 
-- [ ] Datos legales y de contacto en `config.js`: `legalName`, `phone`, `phoneE164`, `email`, `address`.
-- [ ] Horario real: `hours_en`, `hours_es` (y `openingHoursSchema` si se quiere en JSON-LD).
-- [x] Textos legales oficiales en `privacy/`, `terms/`, `es/privacidad/`, `es/terminos/` (17-10-2026). Pendiente: alinear el consentimiento del formulario con la cláusula de SMS (ver `DOCUMENTACION.md` §9.7).
-- [ ] Webhook probado de punta a punta en GoHighLevel (modo `cors-json` o `no-cors`), con `gclid` llegando al contacto.
-- [ ] GTM con la conversión de Google Ads configurada sobre `generate_lead` (y conversiones mejoradas con `user_data`).
-- [ ] Fotos reales cargadas (`gallery`, opcional `heroImage`, `beforeAfter`).
-- [x] Logo oficial en `assets/img/logo-csd.png`. Favicon e ícono de iOS generados a partir del monograma "CSD" del logo. (Si CSD entrega una versión SVG o de mayor resolución, reemplazar el archivo y la ruta en las 8 páginas.)
-- [ ] `crossSellUrl_en` / `crossSellUrl_es` con las landings de limpieza.
-- [ ] `siteVisit` confirmado.
-- [ ] `noindex` revisado (por defecto queda `noindex`, que es lo correcto para una landing de anuncios).
-- [ ] Con dominio definitivo: `hreflang` y `og:image` absolutos.
+- [x] Datos legales y de contacto en `config.js`: CSD Good Services LLC, 8215 NW 64th Street, Medley, FL 33166, (786) 295-7057 (principal), (863) 488-6716, admin@csdgoodservices.com.
+- [x] Textos legales oficiales en `privacy/`, `terms/`, `es/privacidad/`, `es/terminos/` (17-10-2026).
+- [x] Consentimiento del formulario alineado con la cláusula de SMS (solo notificaciones, nunca marketing).
+- [x] Logo oficial, favicon e ícono de iOS.
+- [x] `siteVisit` confirmado (`true`).
+- [x] `noindex` revisado (queda activo, lo correcto para una landing de anuncios).
+- [x] `hreflang` y `og:image` absolutos.
+- [ ] **`webhookUrl`** cargado y probado de punta a punta en GoHighLevel (modo `cors-json` o `no-cors`), con `gclid` llegando al contacto.
+- [ ] **`gtmId`** cargado y conversión de Google Ads configurada en GTM sobre `generate_lead` (con conversiones mejoradas usando `user_data`).
+- [ ] Workflow de GoHighLevel que envíe el email de confirmación que promete la página de gracias.
+- [ ] Anuncios con las URL finales `?h=` vigentes (nada con `?h=exterior`).
+
+Opcionales: horario (`hours_*`), URLs de la landing de limpieza (`crossSellUrl_*`), fotos reales (`gallery`, `heroImage`, `beforeAfter`), logo en mayor resolución.
