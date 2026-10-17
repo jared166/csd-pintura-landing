@@ -9,14 +9,14 @@
 
 ---
 
-## 0. Estado actual (al 17-10-2026)
+## 0. Estado actual (al 17-10-2026, fase 5)
 
 | | |
 | --- | --- |
 | **Sitio publicado** | EN: https://jared166.github.io/csd-pintura-landing/ · ES: https://jared166.github.io/csd-pintura-landing/es/ |
 | **Hosting** | GitHub Pages, rama `main`, carpeta raíz. Cada fusión en `main` se publica sola en ~1 minuto |
 | **Repositorio** | `jared166/csd-pintura-landing` (rama de trabajo: `claude/landing-page-website-premium-c15iz2`) |
-| **Versión de assets** | `?v=20261016.3` |
+| **Versión de assets** | `?v=20261017` |
 | **Pruebas** | 110/110 funcionales · Lighthouse móvil 100 / 100 / 100 / 54 (SEO bajo a propósito por `noindex`) |
 | **Indexación** | `noindex` activo (correcto para una landing de anuncios) |
 
@@ -25,6 +25,7 @@
 - Logo oficial en header, pie, favicon, ícono de iOS e imagen OG.
 - 5 titulares por grupo de anuncios: `?h=office|retail|warehouse|restaurant|residential`.
 - Formulario con validación, antispam, atribución GCLID/UTM y eventos al `dataLayer`.
+- **Textos legales oficiales** (Privacy Policy / Terms of Service, EN y ES) provistos por el cliente, vigentes desde el 17-10-2026. Ver sección 9.7: hay 2 puntos para resolver.
 
 > ⚠️ **No enviar tráfico pago todavía.** `webhookUrl` está vacío en `config.js`, así que el formulario publicado **no entrega los leads a ningún lado**: el visitante llega igual a la página de gracias, pero el lead se pierde. Tampoco hay `gtmId`, así que no se mide ninguna conversión. Ver los bloqueantes en la sección 10.
 
@@ -35,6 +36,8 @@
 | [#1](https://github.com/jared166/csd-pintura-landing/pull/1) | Landing EN/ES completa + capa premium + documentación | Fusionado y publicado |
 | [#2](https://github.com/jared166/csd-pintura-landing/pull/2) | Logo oficial (header, pie, favicon, OG); header 72/84 px | Fusionado y publicado |
 | [#3](https://github.com/jared166/csd-pintura-landing/pull/3) | Titulares por campaña (5 variantes) | Fusionado y publicado |
+| [#4](https://github.com/jared166/csd-pintura-landing/pull/4) | Documentación: sección de estado actual | Fusionado y publicado |
+| [#5](https://github.com/jared166/csd-pintura-landing/pull/5) | Textos legales oficiales en las 4 páginas legales | Fusionado y publicado |
 
 ---
 
@@ -68,10 +71,10 @@ Después, en una segunda fase, se aplicó una capa de diseño premium (ver secci
 | --- | --- |
 | `/index.html` | Landing EN |
 | `/thank-you/` | Gracias EN |
-| `/privacy/`, `/terms/` | Placeholders legales EN |
+| `/privacy/`, `/terms/` | Privacy Policy y Terms of Service EN (texto oficial del cliente) |
 | `/es/index.html` | Landing ES |
 | `/es/gracias/` | Gracias ES |
-| `/es/privacidad/`, `/es/terminos/` | Placeholders legales ES |
+| `/es/privacidad/`, `/es/terminos/` | Política de privacidad y Términos ES (texto oficial del cliente) |
 
 Cada idioma es una **página HTML ya renderizada** (no texto inyectado por JS): el titular aparece sin parpadeo, Google lee el contenido y cada idioma tiene su URL final para su campaña.
 
@@ -254,7 +257,7 @@ Del catálogo del skill se eligió el arquetipo **05 · Mouse-Reactive Gradient*
 **Micro-detalles:** índice decorativo `01–06` en cada título de sección (contador CSS, sin texto en el HTML), botones con elevación y reflejo, subrayado animado en el cambio de idioma, pulso cian junto a "We'll call you back the same business day", línea de tiempo conectada en "How it works", FAQ con apertura suave (CSS `::details-content`, donde el navegador lo soporta), formulario con borde degradado de marca, línea de luz en el pie y halo en la insignia de gracias.
 
 ### 9.3 Robustez adoptada del skill
-- **Cache-busting** `?v=AAAAMMDD` (hoy `?v=20261016.3`) en `styles.css`, `main.js` y `form.js`. **Hay que subir la fecha en cada publicación** (los imports internos entre módulos no llevan versión; GitHub Pages cachea 10 minutos).
+- **Cache-busting** `?v=AAAAMMDD` (hoy `?v=20261017`) en `styles.css`, `main.js` y `form.js`. **Hay que subir la fecha en cada publicación** (los imports internos entre módulos no llevan versión; GitHub Pages cachea 10 minutos).
 - **`.htaccess`** del skill en la raíz: GitHub Pages lo ignora; sirve si algún día el sitio se aloja en Apache/Hostinger.
 - **Cada `init` de `main.js` aislado con `safe()`**: si uno falla, el resto de la página sigue funcionando.
 - **Reveals con umbral bajo (0,01) y red de seguridad a los 6 s**: ningún contenido queda oculto. Escalonado suave entre hermanos.
@@ -302,6 +305,47 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 - **Resultado:** cero 404 en las 8 páginas. Lighthouse móvil EN y ES: rendimiento 100 (LCP 1,4 s, CLS 0), accesibilidad 100, buenas prácticas **100**, SEO 54 (intencional). Pruebas funcionales: 102/102.
 - **Mejora opcional:** el archivo recibido tiene poca resolución (331 px de ancho). En pantallas retina el pie (180 px → 360 px físicos) lo escala apenas. Si CSD tiene el logo en SVG o en PNG de mayor resolución, conviene reemplazarlo.
 
+### 9.7 Fase 5: textos legales oficiales
+- **Origen:** archivo `textos_legales_csd_good_services.md` entregado por el cliente el 17-10-2026. Fecha de entrada en vigor: **17 de octubre de 2026**.
+- **Dónde:**
+
+  | Página | Documento |
+  | --- | --- |
+  | `privacy/` | Privacy Policy |
+  | `terms/` | Terms of Service |
+  | `es/privacidad/` | Política de privacidad |
+  | `es/terminos/` | Términos de servicio |
+
+- **Cómo se publicó:**
+  - El texto va **literal**. Solo se convirtió el formato Markdown a HTML: secciones como `h2`, listas, negritas y la dirección como `<address>`. El H1 de cada página no cambió.
+  - Se eliminaron el aviso "This page is being updated." / "Esta página se está actualizando." y el comentario `[PENDIENTE]`.
+  - Cada página lleva el comentario `Texto legal provisto por el cliente (17-10-2026). Se publica literal; no editar sin su aprobación.`
+- **Verificación:**
+  - Comparación automática palabra por palabra entre el archivo del cliente y el texto visible de las 4 páginas: **idénticos**.
+  - Sin scroll horizontal en 360, 768 y 1440 px.
+  - Contraste, tamaño mínimo de texto y un solo `h1` por página: OK.
+  - Pruebas funcionales: 110/110.
+- **Diseño:** columna de lectura de 70 caracteres, subtítulos separados por una línea fina con el número en cian, viñetas cian, fecha de vigencia en una etiqueta y la dirección de contacto en una tarjeta. Texto en `#C8C8C8` sobre `#0A0A0A` (≈ 12:1).
+- **Para editar un texto legal:** está escrito directamente en el HTML de la página correspondiente. Cambiarlo solo con un texto aprobado por el cliente, y en los dos idiomas.
+
+**Puntos para resolver (no se cambiaron porque son decisiones del cliente o de copy):**
+1. **Consentimiento de SMS en el formulario (importante).** La Privacy Policy (§3, TCPA) dice que, al enviar el formulario, el usuario acepta recibir **llamadas y mensajes de texto (SMS)**. Pero el texto de consentimiento visible debajo del botón dice solo "by phone and email" / "por teléfono y email". Para que el consentimiento de SMS sea válido, debería mencionarse donde el usuario envía el formulario. Propuesta, a aprobar por Jared y el abogado, en los dos idiomas:
+   - EN: "By submitting this form, you agree that CSD Good Services may contact you by phone, text message (SMS) and email about your request. Message and data rates may apply. Reply STOP to opt out. See our Privacy Policy."
+   - ES: "Al enviar este formulario, acepta que CSD Good Services le contacte por teléfono, mensaje de texto (SMS) y email sobre su solicitud. Pueden aplicarse tarifas de mensajes y datos. Responda STOP para cancelar. Consulte nuestra Política de privacidad."
+2. **"presupuesto(s)" en los Términos en español** (3 veces, en §1 y §2). La regla del brief pide "cotización" y no "presupuesto". Se dejó literal porque es texto legal; si el cliente lo aprueba, conviene reemplazarlo por "cotización(es)".
+
+**Datos que aparecen en los textos legales y todavía no están en `config.js`:**
+- Nombre legal: **CSD Good Services LLC**.
+- Dirección: **8215 NW 64th Street, Medley, FL 33166**.
+- Email: **admin@csdgoodservices.com**.
+- Teléfonos: **(786) 295-7057** y **(863) 488-6716**.
+
+Si se confirman para la landing (y cuál de los dos teléfonos es el principal), al cargarlos aparecen solos el teléfono con click-to-call, el pie completo y el JSON-LD `LocalBusiness`.
+
+**Coherencia a revisar:**
+- Los Términos (§2) dicen que toda cotización está "sujeta a una inspección en el sitio". Si es así, conviene poner `siteVisit: true` en `config.js`, y "How it works" mostrará el paso "We visit your space to see the job in person".
+- Los textos mencionan servicios residenciales, de remodelación y de mantenimiento en South Florida, más amplios que esta landing de pintura comercial en Miami. Es coherente como texto legal general de la empresa; no requiere cambios.
+
 ## 10. Pendientes (`[PENDIENTE]`)
 
 **En `config.js`**
@@ -317,8 +361,9 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 - `gallery`, `heroImage`, `beforeAfter`: fotos reales.
 
 **En el contenido y los activos**
-- Textos legales revisados por abogado en las 4 páginas legales. **No lanzar campañas sin esto.**
-- Revisión legal del texto de consentimiento (si piden casilla, se agrega).
+- ~~Textos legales en las 4 páginas legales~~ → **cargados** (fase 5, sección 9.7). Si no pasaron por un abogado, conviene esa revisión antes de lanzar.
+- **Consentimiento de SMS en el formulario:** alinearlo con la Privacy Policy (propuesta en 9.7, punto 1). Si el abogado pide casilla, se agrega.
+- Decidir "presupuesto(s)" → "cotización(es)" en los Términos en español (9.7, punto 2).
 - Con el dominio definitivo (hoy `jared166.github.io/csd-pintura-landing`, o un dominio propio): `hreflang` y `og:image` absolutos.
 - Logo en SVG o PNG de mayor resolución, si CSD lo tiene (opcional; ver 9.6).
 
@@ -328,7 +373,7 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 - Usar las URL finales con `?h=` de la sección 2.4. Cambiar cualquier anuncio que todavía use `?h=exterior`.
 - **Decidir sobre `residential`:** si se va a pautar a vivienda, revisar la FAQ ("This page is for commercial painting") y si `lead_residential` debe contar como conversión. Hoy no cuenta.
 
-**Orden sugerido para lanzar:** 1) datos de `config.js` (webhook y GTM primero), 2) prueba de punta a punta, 3) textos legales, 4) activar campañas.
+**Orden sugerido para lanzar:** 1) datos de `config.js` (webhook y GTM primero; los de contacto ya figuran en los textos legales), 2) prueba de punta a punta, 3) consentimiento de SMS en el formulario, 4) activar campañas.
 
 ---
 
@@ -347,3 +392,4 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 | 2 · Capa premium | Abanico de muestras animado, mesh, grano, bento, halo en tarjetas, ticker, barra de progreso, timeline, cache-busting, `.htaccess`, `safe()`, fuentes sin bloquear el render |
 | 3 · Logo oficial | Logo en header, pie e imagen OG; favicon e ícono de iOS desde el monograma; header 72/84 px |
 | 4 · Titulares por campaña | Variantes del H1 alineadas con las campañas en inglés y los tipos de propiedad: `office`, `retail`, `warehouse`, `restaurant`, `residential` (EN + ES); `exterior` retirada; lista blanca del script y de `attribution.js` actualizada; respaldo al H1 por defecto si falta un texto; `?v=20261016.3` |
+| 5 · Textos legales | Privacy Policy y Terms of Service oficiales del cliente (EN + ES), publicados literal con estilo de lectura; fin de los placeholders; `?v=20261017` |
