@@ -490,7 +490,22 @@ body.has-sticky-bar { padding-bottom: calc(76px + env(safe-area-inset-bottom)); 
 .cross-sell { display: flex; gap: 20px; align-items: flex-start; margin-top: 24px; width: 100%; }
 .cross-sell .card__icon { margin-bottom: 0; }
 .cross-sell__title { font-weight: 700; font-size: 20px; }
-.notice { margin-top: 24px; padding: 20px 24px; border: 1px solid var(--csd-border); border-radius: var(--radius); background: var(--csd-surface); color: var(--csd-gray); }
+/* Textos legales (provistos por el cliente, publicados literal) */
+.legal__content { margin-top: 28px; max-width: 70ch; color: #C8C8C8; }
+.legal__content p, .legal__content ul, .legal__content address { margin-top: 16px; }
+.legal__content strong { color: var(--csd-white); font-weight: 600; }
+.legal__content h2 {
+  margin-top: 44px; padding-top: 28px; border-top: 1px solid var(--csd-border);
+  font-size: 20px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; color: var(--csd-white);
+}
+.legal__content h2::first-letter { color: var(--csd-cyan); }
+.legal__content ul { display: grid; gap: 12px; padding-left: 0; }
+.legal__content li { position: relative; padding-left: 22px; }
+.legal__content li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 6px; height: 6px; border-radius: 50%; background: var(--csd-cyan); }
+.legal__content code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; padding: 1px 6px; border-radius: 6px; background: var(--csd-surface); border: 1px solid var(--csd-border); }
+.legal__content address { font-style: normal; padding: 20px 24px; border: 1px solid var(--csd-border); border-radius: var(--radius); background: var(--csd-surface); line-height: 1.7; }
+.legal__date { display: inline-block; padding: 6px 14px; border-radius: 12px; border: 1px solid var(--csd-border); font-size: 15px; color: var(--csd-gray); }
+.legal__content > .legal__date { margin-top: 0; }
 
 /* Reveal (fade + 8px). Solo con JS. ------------------------------------- */
 .js .reveal { opacity: 0; transform: translateY(8px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: var(--d, 0s); }

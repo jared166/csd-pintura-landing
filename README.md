@@ -13,13 +13,13 @@ Landing de captación para el servicio de **pintura comercial** de CSD Good Serv
 /
 ├── index.html                  Landing EN
 ├── thank-you/index.html        Gracias EN
-├── privacy/index.html          Privacy Policy EN (placeholder legal)
-├── terms/index.html            Terms of Service EN (placeholder legal)
+├── privacy/index.html          Privacy Policy EN (texto oficial del cliente)
+├── terms/index.html            Terms of Service EN (texto oficial del cliente)
 ├── es/
 │   ├── index.html              Landing ES
 │   ├── gracias/index.html      Gracias ES
-│   ├── privacidad/index.html   Política de privacidad ES (placeholder legal)
-│   └── terminos/index.html     Términos del servicio ES (placeholder legal)
+│   ├── privacidad/index.html   Política de privacidad ES (texto oficial del cliente)
+│   └── terminos/index.html     Términos del servicio ES (texto oficial del cliente)
 ├── assets/
 │   ├── css/styles.css
 │   ├── js/config.js            ← ÚNICO archivo de configuración
@@ -69,10 +69,10 @@ Para probar como en GitHub Pages bajo subruta, sirve la carpeta padre y entra po
 
 ## Publicar una nueva versión (caché)
 
-Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261016.3`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
+Los `<link>` y `<script>` locales llevan `?v=AAAAMMDD` (hoy `?v=20261017`). **En cada publicación, súbela** en las 8 páginas para que nadie vea CSS/JS viejo:
 
 ```bash
-grep -rl 'v=20261016.3' --include=index.html . | xargs sed -i 's/v=20261016.3/v=20261120/g'   # usa la fecha de hoy
+grep -rl 'v=20261017' --include=index.html . | xargs sed -i 's/v=20261017/v=20261120/g'   # usa la fecha de hoy
 ```
 
 ## Qué se edita en `config.js`
@@ -177,7 +177,7 @@ Agrega `?h=` a la URL final de cada grupo de anuncios (las campañas pagas son e
 
 - [ ] Datos legales y de contacto en `config.js`: `legalName`, `phone`, `phoneE164`, `email`, `address`.
 - [ ] Horario real: `hours_en`, `hours_es` (y `openingHoursSchema` si se quiere en JSON-LD).
-- [ ] Textos legales revisados por abogado en `privacy/`, `terms/`, `es/privacidad/`, `es/terminos/`. **No lanzar campañas sin esto.** Confirmar si el consentimiento necesita casilla.
+- [x] Textos legales oficiales en `privacy/`, `terms/`, `es/privacidad/`, `es/terminos/` (17-10-2026). Pendiente: alinear el consentimiento del formulario con la cláusula de SMS (ver `DOCUMENTACION.md` §9.7).
 - [ ] Webhook probado de punta a punta en GoHighLevel (modo `cors-json` o `no-cors`), con `gclid` llegando al contacto.
 - [ ] GTM con la conversión de Google Ads configurada sobre `generate_lead` (y conversiones mejoradas con `user_data`).
 - [ ] Fotos reales cargadas (`gallery`, opcional `heroImage`, `beforeAfter`).
