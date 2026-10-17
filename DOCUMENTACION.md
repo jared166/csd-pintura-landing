@@ -9,6 +9,35 @@
 
 ---
 
+## 0. Estado actual (al 17-10-2026)
+
+| | |
+| --- | --- |
+| **Sitio publicado** | EN: https://jared166.github.io/csd-pintura-landing/ · ES: https://jared166.github.io/csd-pintura-landing/es/ |
+| **Hosting** | GitHub Pages, rama `main`, carpeta raíz. Cada fusión en `main` se publica sola en ~1 minuto |
+| **Repositorio** | `jared166/csd-pintura-landing` (rama de trabajo: `claude/landing-page-website-premium-c15iz2`) |
+| **Versión de assets** | `?v=20261016.3` |
+| **Pruebas** | 110/110 funcionales · Lighthouse móvil 100 / 100 / 100 / 54 (SEO bajo a propósito por `noindex`) |
+| **Indexación** | `noindex` activo (correcto para una landing de anuncios) |
+
+**Listo y en vivo**
+- 8 páginas (landing, gracias, privacidad y términos, en EN y ES) con el copy del brief y la capa premium.
+- Logo oficial en header, pie, favicon, ícono de iOS e imagen OG.
+- 5 titulares por grupo de anuncios: `?h=office|retail|warehouse|restaurant|residential`.
+- Formulario con validación, antispam, atribución GCLID/UTM y eventos al `dataLayer`.
+
+> ⚠️ **No enviar tráfico pago todavía.** `webhookUrl` está vacío en `config.js`, así que el formulario publicado **no entrega los leads a ningún lado**: el visitante llega igual a la página de gracias, pero el lead se pierde. Tampoco hay `gtmId`, así que no se mide ninguna conversión. Ver los bloqueantes en la sección 10.
+
+**Historial de publicaciones**
+
+| PR | Contenido | Estado |
+| --- | --- | --- |
+| [#1](https://github.com/jared166/csd-pintura-landing/pull/1) | Landing EN/ES completa + capa premium + documentación | Fusionado y publicado |
+| [#2](https://github.com/jared166/csd-pintura-landing/pull/2) | Logo oficial (header, pie, favicon, OG); header 72/84 px | Fusionado y publicado |
+| [#3](https://github.com/jared166/csd-pintura-landing/pull/3) | Titulares por campaña (5 variantes) | Fusionado y publicado |
+
+---
+
 ## 1. Resumen ejecutivo
 
 Se construyó una landing de captación **estática, sin build y lista para GitHub Pages**, con dos idiomas pre-renderizados, un formulario de cotización completo con plan B ante fallas, captura de atribución (GCLID/UTM) persistente por 90 días y medición preparada para Google Ads a través de GTM.
@@ -80,12 +109,12 @@ Cada idioma es una **página HTML ya renderizada** (no texto inyectado por JS): 
    - **Atribución:** la misma lista está en `HEADLINE_KEYS` de `assets/js/attribution.js`. Así la clave llega a GoHighLevel como `h_param` (la de la URL del primer contacto) y como `headline_variant` (la que vio el usuario al enviar).
    - **Claves desconocidas, `exterior`, mayúsculas, vacías o con código** (`?h=<script>`): H1 por defecto, en EN y ES. Verificado.
 
-   **URLs finales para Google Ads** (un valor por grupo de anuncios):
-   - `https://<dominio>/?h=office`
-   - `https://<dominio>/?h=retail`
-   - `https://<dominio>/?h=warehouse`
-   - `https://<dominio>/?h=restaurant`
-   - `https://<dominio>/?h=residential`
+   **URLs finales para Google Ads** (un valor por grupo de anuncios; si se usa un dominio propio, cambiar solo la base):
+   - `https://jared166.github.io/csd-pintura-landing/?h=office`
+   - `https://jared166.github.io/csd-pintura-landing/?h=retail`
+   - `https://jared166.github.io/csd-pintura-landing/?h=warehouse`
+   - `https://jared166.github.io/csd-pintura-landing/?h=restaurant`
+   - `https://jared166.github.io/csd-pintura-landing/?h=residential`
 
    Los anuncios que todavía usen `?h=exterior` siguen funcionando, pero muestran el titular general; conviene cambiar su URL final.
 
@@ -98,7 +127,7 @@ Cada idioma es una **página HTML ya renderizada** (no texto inyectado por JS): 
 7. **Mensajes de validación** (no estaban en el brief): cortos, en el idioma de la página, con "usted" en español. Ej.: "Please enter a valid 10-digit US phone number." / "Ingrese un teléfono válido de EE. UU. de 10 dígitos."
 8. **Etiqueta "Optional" / "Opcional"** junto a los dos campos opcionales (tamaño y mensaje), como ayuda de interfaz; no altera el copy de las etiquetas.
 9. **"give us a call" / "llámenos" en la FAQ de viviendas** se convierte en link `tel:` solo si hay teléfono (por eso existe la ubicación `faq` en `click_to_call`). Sin teléfono queda como texto.
-10. **Logo** _(resuelto en la fase 3, ver sección 9.6)_. Mientras faltaba, el `<img>` apuntaba a `assets/img/logo-csd.svg`. Si el archivo no existe, se oculta visualmente (opacidad 0) y conserva su espacio y su `alt` para lectores de pantalla. No se muestra el nombre escrito con otra fuente, porque el manual lo prohíbe.
+10. **Logo** _(resuelto en la fase 3, ver sección 9.6)_. Mientras faltaba, el `<img>` apuntaba a `assets/img/logo-csd.svg` y se ocultaba sin mostrar el nombre escrito con otra fuente, porque el manual lo prohíbe. Desde la fase 3 usa el archivo oficial `assets/img/logo-csd.png`, y ese mecanismo de ocultamiento se eliminó.
 11. **Favicon** _(fase 3)_: recorte del monograma "CSD" del logo oficial sobre `#0A0A0A` (reemplazó a la "C" provisoria).
 12. **Imagen OG** generada: fondo `#0A0A0A`, logo oficial, H1 por defecto en blanco y línea cian. Sin fotos.
 13. **Campos extra en `config.js`**: `openingHoursSchema` (horario en formato schema.org para JSON-LD: el texto libre de `hours_en` no es válido ahí) y `heroImageAlt_en/_es` (texto alternativo de la foto del hero).
@@ -290,7 +319,16 @@ El verificador del skill (`verify_project.py`) marca esos puntos como errores. T
 **En el contenido y los activos**
 - Textos legales revisados por abogado en las 4 páginas legales. **No lanzar campañas sin esto.**
 - Revisión legal del texto de consentimiento (si piden casilla, se agrega).
-- Con el dominio definitivo: `hreflang` y `og:image` absolutos.
+- Con el dominio definitivo (hoy `jared166.github.io/csd-pintura-landing`, o un dominio propio): `hreflang` y `og:image` absolutos.
+- Logo en SVG o PNG de mayor resolución, si CSD lo tiene (opcional; ver 9.6).
+
+**En Google Ads y GTM**
+- Configurar en GTM la conversión de Google Ads sobre `generate_lead` (con conversiones mejoradas usando `user_data`).
+- Probar el formulario de punta a punta: envío → contacto en GoHighLevel con `gclid` y `h_param`.
+- Usar las URL finales con `?h=` de la sección 2.4. Cambiar cualquier anuncio que todavía use `?h=exterior`.
+- **Decidir sobre `residential`:** si se va a pautar a vivienda, revisar la FAQ ("This page is for commercial painting") y si `lead_residential` debe contar como conversión. Hoy no cuenta.
+
+**Orden sugerido para lanzar:** 1) datos de `config.js` (webhook y GTM primero), 2) prueba de punta a punta, 3) textos legales, 4) activar campañas.
 
 ---
 
